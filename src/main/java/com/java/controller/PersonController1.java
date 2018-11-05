@@ -37,6 +37,9 @@ import com.java.dto.Person1;
 import com.java.dto.Person2PersonMapper;
 import com.java.service.PersonService;
 
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
 @RestController
 @RequestMapping(path = "/v1/persons")
 public class PersonController1 {
@@ -50,7 +53,6 @@ public class PersonController1 {
 		Person p = person.orElse(new Person()); // <person/>
 		Link link= ControllerLinkBuilder.linkTo(AddressController.class, id).withRel("address-info");
 		Person1 obj= Person2PersonMapper.getObject(p);
-		obj.removeLinks();
 		obj.add(link);
 		return ResponseEntity.ok().eTag(String.valueOf(p.getVersion())).body(obj);
 	}
@@ -66,6 +68,13 @@ public class PersonController1 {
 	}
 
 	@PutMapping(path = "/{id}", consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+	@ApiResponses(value= {
+	@ApiResponse(code=404, message="Not found"),
+	@ApiResponse(code=400, message="Bad Request"),
+	@ApiResponse(code=412, message="Precondition failed"),
+	@ApiResponse(code=200, message="Person updated successully")
+	}
+	)
 	public ResponseEntity<?> updatePerson(@PathVariable("id") int id, @RequestBody String data, HttpServletRequest request)
 			throws JsonParseException, JsonMappingException, IOException {
 		Person p=service.getOne(id).get();

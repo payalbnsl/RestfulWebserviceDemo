@@ -16,15 +16,18 @@ import org.springframework.web.bind.annotation.RestController;
 import com.java.dto.Address;
 import com.java.service.AddressService;
 
+import io.swagger.annotations.ApiParam;
+
 @RestController
 @RequestMapping(path="v1/persons/{personId}/addresses")
 public class AddressController {
 
 	@Autowired AddressService service;
 	
-	@GetMapping(path = "/{id}",  produces = { MediaType.APPLICATION_JSON_VALUE,
+	@GetMapping(path = "/{hno}",  produces = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_XML_VALUE })
-	public ResponseEntity<Address> fetchById(@PathVariable("id") int id, @PathVariable("personId") int personId) {
+	
+	public ResponseEntity<Address> fetchById(@ApiParam(name="hno", value="Represents house number") @PathVariable("hno") int id, @PathVariable("personId") int personId) {
 		Address address=service.findByHno(id, personId);
 		if(address==null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -34,7 +37,7 @@ public class AddressController {
 	
 	@PutMapping( consumes = { MediaType.APPLICATION_JSON_VALUE,
 		MediaType.APPLICATION_XML_VALUE })
-	public ResponseEntity<Integer> updateAddress(@PathVariable("personId") int personId,@RequestBody Address address) {
+	public ResponseEntity<Integer> updateAddress(@ApiParam(value="Person id, unique identifier for person")@PathVariable("personId") int personId,@RequestBody Address address) {
 		MultiValueMap<String, String> header = new HttpHeaders();
 		System.out.println(address);
 		return new ResponseEntity(service.saveAddress(personId, address), header, HttpStatus.CREATED);

@@ -29,43 +29,54 @@ import org.springframework.web.util.UriTemplate;
 import com.java.dto.Person;
 import com.java.service.PersonService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+
+@Api(value="PersonController: version 2", description="Revised version for person service. Changed phonenumber to be of type map. Saved as key-value pair with type as key ")
 @RestController
-@RequestMapping(path = "/v2/persons", produces = { MediaType.APPLICATION_JSON_VALUE,
-		MediaType.APPLICATION_XML_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE,
-				MediaType.APPLICATION_XML_VALUE })
+@RequestMapping(path = "/v2/persons")
 public class PersonController2 {
 
 	@Autowired
 	PersonService service;
-
-	@GetMapping(path = "/{id}")
+	@ApiOperation(value="Fetch a particular person by it's id",response=Person.class,produces="application/json, application/xml")
+	//@ApiParam(value="Person id", allowableValues="range[1, infinity]", allowEmptyValue=false)
+	@ApiResponse(code=200,reference="Person object", message="Object retrieved successfully")
+	@GetMapping(path = "/{id}",produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE })
 	public ResponseEntity<Person> fetchById(@PathVariable("id") int id) {
 		Optional<Person> person = service.getOne(id);
-		person.orElse(new Person()); // <person/>
-		return ResponseEntity.ok(person.get());
+		Person obj=person.orElse(new Person()); // <person/>
+		return ResponseEntity.ok(obj);
 	}
 
-	@GetMapping(params="name")
-	public ResponseEntity<Person> fetchByName(@RequestParam("name") String name) {
+	@GetMapping(params="name",produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE })
+	public ResponseEntity<Person> fetchByName(@ApiParam(value="Name of the person")@RequestParam("name") String name) {
 		Optional<Person> person = service.getByName(name);
-		person.orElse(new Person()); // <person/>
-		return ResponseEntity.ok(person.get());
+		Person obj=person.orElse(new Person()); // <person/>
+		return ResponseEntity.ok(obj);
 	}
 	
 	
-	@GetMapping(params= {"limit", "offset"})
-	public ResponseEntity<List<Person>> fetchByName(@RequestParam("offset") int offset, @RequestParam("limit") int limit) {
+	@GetMapping(params= {"limit", "offset"},produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE })
+	public ResponseEntity<List<Person>> fetchByPagination(@RequestParam("offset") int offset, @RequestParam("limit") int limit) {
 		Page<Person> person = service.getByName(offset, limit);
 		return ResponseEntity.ok(person.getContent());
 	}
 	
-	@GetMapping
+	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE,
+		MediaType.APPLICATION_XML_VALUE })
 	public List<Person> fetchAll() {
 		List<Person> persons = service.findAll();
 		return persons;
 	}
 
-	@PutMapping(path = "/{id}")
+	@PutMapping(path = "/{id}", consumes = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE })
 	@ResponseStatus(code = HttpStatus.NO_CONTENT, reason = "Person updated successfully!")
 	public void updatePerson(@PathVariable("id") int id, @RequestBody Person person) {
 		person.setPersonId(id);
@@ -79,7 +90,8 @@ public class PersonController2 {
 	}
 
 	//person: 6
-	@PostMapping
+	@PostMapping( consumes = { MediaType.APPLICATION_JSON_VALUE,
+				MediaType.APPLICATION_XML_VALUE })
 	@ResponseStatus(code=HttpStatus.NO_CONTENT)
 	public void addPerson(@RequestBody Person person, HttpServletRequest request, HttpServletResponse response) {
 		HttpHeaders header = new HttpHeaders();
@@ -91,7 +103,8 @@ public class PersonController2 {
 		response.setHeader("Location", uri.toASCIIString());
 	}
 	
-	@GetMapping(params= {"id", "states"})
+	@GetMapping(params= {"id", "states"},produces = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE })
 	public ResponseEntity<List<Person>> getPersonsBySpec(@RequestParam int id, @RequestParam String... states){
 		return	ResponseEntity.ok(service.getBySpec(id, states));
 	}
