@@ -36,7 +36,8 @@ public class MyExceptionHandler extends ResponseEntityExceptionHandler {
 	protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 		Error response = new Error(500, "Http Method not supported", LocalDateTime.now());
-		return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
+		return  handleExceptionInternal(
+			      ex, response, headers, HttpStatus.INTERNAL_SERVER_ERROR, request);
 	}
 	
 
