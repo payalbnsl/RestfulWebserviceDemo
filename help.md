@@ -1,3 +1,4 @@
+ mvn dependency:purge-local-repository
 StatusCode
 
 2xx: success response
