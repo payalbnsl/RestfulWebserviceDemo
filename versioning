@@ -1,13 +1,39 @@
-1) MediaType: accept-header
+1) MediaType: accept-header/ mime versioning
   -Github
+  
+@RequestMapping(value="persons/param", produces="application/vnd.company-v1+json")
+public Person getData(){
+
+}
+
 2) header
   -Micorsoft
+@RequestMapping(value="persons/param", headers="X-API-VERSION=1")
+public Person getData(){
+
+}
+
 3) URI versioning
   -Twitter
+@RequestMapping(value="persons/v1")
+public Person getData(){
+
+}
+
 4) Parameter versioning
   -Amazon
+@RequestMapping(value="persons/param", params="version=1")
+public Person getData(){
 
+}
 
 Person: name
 
 Person1: firstname, lastname
+
+Mediatype or header is not causing uri pollution
+Http headers were not intended for versioning, Caching cannot come in picture as need to look into headers
+Exceuting request on browser: first 2 not possible
+Api documentation: 3,4 is easy for others may be tough
+
+
