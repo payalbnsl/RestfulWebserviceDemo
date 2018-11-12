@@ -9,13 +9,13 @@ Add the files in resources/i18n folder as shown in image
 Add the following to the Application class ( The main class)
 
 
-//since no session in restful
- @Bean
+//since no session in restful. By0default: AcceptHeaderLocaleResolver
+/* @Bean
  public LocaleResolver localeResolver() {
   AcceptHeaderLocaleResolver slr = new AcceptHeaderLocaleResolver();
   slr.setDefaultLocale(Locale.US); // Set default Locale as US
   return slr;
- }
+ } */
 
  /*@Bean
  public ResourceBundleMessageSource messageSource() {
@@ -41,13 +41,21 @@ Note : You need to define all your resouce bundles in the messageSource bean so 
        @Autowired 
        private MessageSource messageSource;
 
-       @RequestMapping("/msg")
-       public String msg(@RequestHeader("Accept-Language") Locale locale){
-          return messageSource.getMessage("msg",null,locale);
-       }
-       
-        @RequestMapping("/msg")
-       public String msg(){
-          return messageSource.getMessage("msg",null,LocaleContextHolder.getLocale());
-       }
+     @GetMapping("data1")
+	public String data(@RequestHeader(name="Accept-Language", defaultValue="en") Locale locale) {
+		return source.getMessage("message", null, locale);
+	}
+	
+
+	@GetMapping("data2")
+	public String data2( Locale locale) {
+		return source.getMessage("message", null, locale);
+	}
+	
+	
+	
+	@GetMapping("data3")
+	public String data3() {
+		return source.getMessage("message", null, LocaleContextHolder.getLocale());
+	}
     }
