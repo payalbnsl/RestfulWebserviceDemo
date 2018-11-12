@@ -1,0 +1,20 @@
+Ignroe field1 in some scenarios and field2 in others based on condition:
+
+class MappingJacksonValue
+
+In controller:
+
+public MappingJacksonValue geData(){
+SimpleBeanPropertyfilter filter= SimpleBeanPropertyfilter.filterOutAllExcept("field1", "field2"); 
+MappingJacksonValue value= new MappingJacksonValue(beanname);
+FilterProvider filters= new SimpleFilterProvider().addFilter("nameOfFilter", filter);
+mapping.setFilters(filters));
+return mapping;
+}
+
+In bean:
+
+@JsonFilter("nameOfFilter)
+class MyBean{
+
+}
