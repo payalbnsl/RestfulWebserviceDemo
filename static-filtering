@@ -1,0 +1,3 @@
+To not show secured filed value in response like password: @JsonIgnore on field
+
+orr @JsonIgnoreProperties(valeue= {"field1", "field2"}) on top of class
