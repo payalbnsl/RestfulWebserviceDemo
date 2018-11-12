@@ -1,0 +1,49 @@
+Accept the Locale from Headers e.g 
+
+   @RequestHeader("Accept-Language") Locale locale
+
+Step 1 : Define Beans for Internationalization
+Add the files in resources/i18n folder as shown in image
+
+
+Add the following to the Application class ( The main class)
+
+
+
+ @Bean
+ public LocaleResolver localeResolver() {
+  SessionLocaleResolver slr = new SessionLocaleResolver();
+  slr.setDefaultLocale(Locale.US); // Set default Locale as US
+  return slr;
+ }
+
+ @Bean
+ public ResourceBundleMessageSource messageSource() {
+  ResourceBundleMessageSource source = new ResourceBundleMessageSource();
+  source.setBasenames("i18n/messages");  // name of the resource bundle 
+  source.setUseCodeAsDefaultMessage(true);
+  return source;
+ }
+
+
+Now inject the MessageSource Bean where you want to internationalize the message. We will be doing it in the Controller.
+Note : You need to define all your resouce bundles in the messageSource bean so that the application can pick them.
+
+
+
+    @RestController
+    public class HomeController {
+
+       @Autowired 
+       private MessageSource messageSource;
+
+       @RequestMapping("/msg")
+       public String msg(@RequestHeader("Accept-Language") Locale locale){
+          return messageSource.getMessage("msg",null,locale);
+       }
+       
+        @RequestMapping("/msg")
+       public String msg(){
+          return messageSource.getMessage("msg",null,LocaleContextHolder.getLocale());
+       }
+    }
