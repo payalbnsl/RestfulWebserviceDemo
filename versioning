@@ -1,0 +1,13 @@
+1) MediaType: accept-header
+  -Github
+2) header
+  -Micorsoft
+3) URI versioning
+  -Twitter
+4) Parameter versioning
+  -Amazon
+
+
+Person: name
+
+Person1: firstname, lastname
