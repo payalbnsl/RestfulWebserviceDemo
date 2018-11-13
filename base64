@@ -10,3 +10,68 @@ System.out.println("encoded value is " + new String(bytesEncoded));
 // Decode data on other side, by processing encoded data
 byte[] valueDecoded = Base64.decodeBase64(bytesEncoded);
 System.out.println("Decoded value is " + new String(valueDecoded));
+
+
+The transport system of email is designed for plain ASCII text only. Trying to send text in other languages or arbitrary files is like getting a truck through the ravine.
+
+How Does the Big Truck go Through the Ravine?
+Then how do you send a big truck through a small ravine? You have to take it to pieces on the one end, transport the pieces through the ravine, and rebuild the truck from the pieces on the other end.
+
+
+The same happens when you send a file attachment via email. In a process known as encoding the binary data is transformed to ASCII text, which can be transported in email without problems. On the recipient's end, the data is decoded and the original file is rebuilt.
+
+One method of encoding arbitrary data as plain ASCII text is Base64. It is one of the techniques employed by the MIME standard to send data other than plain text.
+
+Base64 to the Rescue
+Base64 encoding takes three bytes, each consisting of eight bits, and represents them as four printable characters in the ASCII standard. It does that in essentially two steps.
+
+The first step is to convert three bytes to four numbers of six bits. Each character in the ASCII standard consists of seven bits. Base64 only uses 6 bits (corresponding to 2^6 = 64 characters) to ensure encoded data is printable and humanly readable. None of the special characters available in ASCII are used.
+
+The 64 characters (hence the name Base64) are 10 digits, 26 lowercase characters, 26 uppercase characters as well as '+' and '/'.
+
+If for example, the three bytes are 155, 162 and 233, the corresponding (and frightening) bit stream is 100110111010001011101001, which in turn corresponds to the 6-bit values 38, 58, 11 and 41.
+
+
+These numbers are converted to ASCII characters in the second step using the Base64 encoding table. The 6-bit values of our example translate to the ASCII sequence "m6Lp".
+
+155 -> 10011011
+162 -> 10100010
+233 -> 11101001
+100110 -> 38
+111010 -> 58
+001011 -> 11
+101001 -> 41
+38 -> m
+58 -> 6
+11 -> L
+41 -> p
+This two-step process is applied to the whole sequence of bytes that are encoded. To ensure the encoded data can be properly printed and does not exceed any mail server's line length limit, newline characters are inserted to keep line lengths below 76 characters. The newline characters are encoded like all other data.
+
+Solving the Endgame
+At the end of the encoding process, we might run into a problem. If the size of the original data in bytes is a multiple of three, everything works fine. If it is not, we might end up with one or two 8-bit bytes. For proper encoding, we need exactly three bytes, however.
+
+The solution is to append enough bytes with a value of '0' to create a 3-byte group. Two such values are appended if we have one extra byte of data, one is appended for two extra bytes.
+
+Of course, these artificial trailing '0's cannot be encoded using the encoding table below. They must be represented by a 65th character.
+
+
+The Base64 padding character is '='. Naturally, it can only ever appear at the end of encoded data.
+
+Base64 Encoding Table
+Value	Char	 	Value	Char	 	Value	Char	 	Value	Char
+0	A	 	16	Q	 	32	g	 	48	w
+1	B	 	17	R	 	33	h	 	49	x
+2	C	 	18	S	 	34	i	 	50	y
+3	D	 	19	T	 	35	j	 	51	z
+4	E	 	20	U	 	36	k	 	52	0
+5	F	 	21	V	 	37	l	 	53	1
+6	G	 	22	W	 	38	m	 	54	2
+7	H	 	23	X	 	39	n	 	55	3
+8	I	 	24	Y	 	40	o	 	56	4
+9	J	 	25	Z	 	41	p	 	57	5
+10	K	 	26	a	 	42	q	 	58	6
+11	L	 	27	b	 	43	r	 	59	7
+12	M	 	28	c	 	44	s	 	60	8
+13	N	 	29	d	 	45	t	 	61	9
+14	O	 	30	e	 	46	u	 	62	+
+15	P	 	31	f	 	47	v	 	63	/
